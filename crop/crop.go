@@ -47,6 +47,12 @@ type Content struct {
 	Content string `json:"content"`
 }
 
+type ContentCard struct {
+	Title string `json:"title"`
+	Content string `json:"description"`
+	Url string `json:"url"`
+	BtnTxt string `json:"btntxt"`
+}
 //Message 消息主体参数
 type Message struct {
 	ToUser  string  `json:"touser"`
@@ -55,6 +61,7 @@ type Message struct {
 	MsgType string  `json:"msgtype"`
 	AgentID int     `json:"agentid"`
 	Text    Content `json:"text"`
+	TextCard    ContentCard `json:"textcard"`
 }
 
 //New 实例化微信企业号应用
@@ -154,6 +161,7 @@ func getAccessTokenFromWeixin(cropID, secret string) (TokenSession AccessToken, 
 //JSONPost Post请求json数据
 func JSONPost(url string, data interface{}) ([]byte, error) {
 	jsonBody, err := encodeJSON(data)
+	log.Println("json: " + string(jsonBody[:]))
 	if err != nil {
 		return nil, err
 	}

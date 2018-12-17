@@ -57,10 +57,12 @@
         "plus_api_token": "used-by-alarm-in-server-side-and-disabled-by-set-to-blank"
     },
 ```
+> 也可以使用 "xx.com:4567/send?type=textcard", 推送一个卡片消息(限长512), 默认 `text`(限长2048). 由于 falcon 框架本身对 IM 参数只支持 `tos`, `content` 所以不能动态设置 `title`(限长128), `url`
 
 ### 使用
-> 1. clone 文件 `git clone https://www.github.com/yanjunhui/chat.git`
+> 1. clone 文件 `git clone https://www.github.com/chainboy/chat.git`
 > 2. 打开目录 `cd chat`
+> 3. 编译 `go build main.go`
 > 3. 启动 `./control.sh start`
 > 4. 停止 `./control.sh stop`
 > 5. 重启 `./control.sh restart`

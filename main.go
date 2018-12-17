@@ -41,7 +41,7 @@ func main() {
 
 	e := echo.New()
 	e.Use(middleware.Logger())
-	e.POST("/send", SendMsg)
+    e.POST("/send", SendMsg)
 
 	port := Config.GetValue("http", "port")
 	address := Config.GetValue("http", "address")
@@ -54,12 +54,25 @@ func main() {
 
 //SendMsg 接受发送请求
 func SendMsg(ctx echo.Context) error {
+	msgtype := ctx.QueryParam("type")
 	toUser := ctx.FormValue("tos")
+	title := ctx.FormValue("subject")
 	content := ctx.FormValue("content")
+	url := ctx.FormValue("url")
 	toUser = strings.Replace(toUser, ",", "|", -1)
 
 	r := regexp.MustCompile(`(\[(.*?)])`)
 	result := r.FindAllStringSubmatch(content, -1)
+
+	if msgtype != "text" && msgtype!= "textcard" {
+		msgtype = "text"
+	}
+	if url == "" {
+		url = "https://www.google.com"
+	}
+	if title == "" {
+		title = "WARNING"
+	}
 
 	text := ""
 	if result != nil {
@@ -76,8 +89,14 @@ func SendMsg(ctx echo.Context) error {
 
 	msg := crop.Message{}
 	msg.ToUser = toUser
-	msg.MsgType = "text"
-	msg.Text = crop.Content{Content: text}
+	msg.MsgType = msgtype
+	if msgtype == "text" {
+		msg.Text = crop.Content{Content: text}
+		// msg.TextCard = crop.ContentCard{}
+	} else {
+		msg.Text = crop.Content{}
+		msg.TextCard = crop.ContentCard{Title: title, Content: text, Url: url, BtnTxt: "More"}
+	}
 
 	log.Printf("发送告警信息: %s, 接收用户: %s", content, toUser)
 
